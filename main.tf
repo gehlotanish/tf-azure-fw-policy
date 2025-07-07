@@ -34,10 +34,8 @@ resource "azurerm_firewall_policy" "main" {
           protocol              = traffic_bypass.value.protocol
           description           = traffic_bypass.value.description
           destination_addresses = traffic_bypass.value.destination_addresses
-          destination_ip_groups = traffic_bypass.value.destination_ip_groups
           destination_ports     = traffic_bypass.value.destination_ports
           source_addresses      = traffic_bypass.value.source_addresses
-          source_ip_groups      = traffic_bypass.value.source_ip_groups
         }
       }
     }
@@ -64,4 +62,73 @@ resource "azurerm_firewall_policy" "main" {
   }
 
   tags = var.tags
+}
+
+resource "azurerm_firewall_network_rule_collection" "main" {
+  for_each            = try({ for collection in var.network_rule_collections : collection.name => collection }, toset([]))
+  name                = each.key
+  azure_firewall_name = var.firewall_name
+  resource_group_name = var.resource_group_name
+  priority            = each.value.priority
+  action              = each.value.action
+
+  dynamic "rule" {
+    for_each = each.value.rules
+    content {
+      name                  = rule.value.name
+      source_addresses      = rule.value.source_addresses
+      destination_addresses = rule.value.destination_addresses
+      destination_fqdns     = rule.value.destination_fqdns
+      destination_ports     = rule.value.destination_ports
+      protocols             = rule.value.protocols
+    }
+  }
+}
+
+resource "azurerm_firewall_application_rule_collection" "main" {
+  for_each            = try({ for collection in var.application_rule_collections : collection.name => collection }, toset([]))
+  name                = each.key
+  azure_firewall_name = var.firewall_name
+  resource_group_name = var.resource_group_name
+  priority            = each.value.priority
+  action              = each.value.action
+
+  dynamic "rule" {
+    for_each = each.value.rules
+    content {
+      name             = rule.value.name
+      source_addresses = rule.value.source_addresses
+      target_fqdns     = rule.value.target_fqdns
+
+      dynamic "protocol" {
+        for_each = rule.value.protocols
+        content {
+          port = protocol.value.port
+          type = protocol.value.type
+        }
+      }
+    }
+  }
+}
+
+resource "azurerm_firewall_nat_rule_collection" "main" {
+  for_each            = try({ for collection in var.nat_rule_collections : collection.name => collection }, toset([]))
+  name                = each.key
+  azure_firewall_name = var.firewall_name
+  resource_group_name = var.resource_group_name
+  priority            = each.value.priority
+  action              = each.value.action
+
+  dynamic "rule" {
+    for_each = each.value.rules
+    content {
+      name                  = rule.value.name
+      source_addresses      = rule.value.source_addresses
+      destination_ports     = rule.value.destination_ports
+      destination_addresses = rule.value.destination_addresses
+      translated_address    = rule.value.translated_address
+      translated_port       = rule.value.translated_port
+      protocols             = rule.value.protocols
+    }
+  }
 }

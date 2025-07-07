@@ -50,6 +50,31 @@ variable "explicit_proxy" {
   default     = null
 }
 
+
+variable "network_rule_collections" {
+  description = "List of network rule collections."
+  type        = any
+  default     = []
+}
+
+variable "application_rule_collections" {
+  description = "List of application rule collections."
+  type        = any
+  default     = []
+}
+
+variable "nat_rule_collections" {
+  description = "List of NAT rule collections."
+  type        = any
+  default     = []
+}
+
+variable "firewall_name" {
+  description = "Name for the Azure Firewall resource."
+  type        = string
+}
+
+
 variable "tags" {
   description = "Additional tags to apply to resources."
   type        = map(string)
