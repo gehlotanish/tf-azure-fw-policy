@@ -32,7 +32,10 @@ No modules.
 | <a name="input_threat_intelligence_mode"></a> [threat\_intelligence\_mode](#input\_threat\_intelligence\_mode) | Threat intelligence mode for the Firewall Policy. | `string` | `"Alert"` | no |  
 ## Outputs
 
-No outputs.
+| Name | Description |
+|------|-------------|
+| <a name="output_firewall_policy_base_policy_id"></a> [firewall\_policy\_base\_policy\_id](#output\_firewall\_policy\_base\_policy\_id) | ID of the Azure Firewall Policy. |
+| <a name="output_firewall_policy_id"></a> [firewall\_policy\_id](#output\_firewall\_policy\_id) | ID of the Azure Firewall Policy. |
 <!-- END_TF_DOCS -->
 
 ## Usage
