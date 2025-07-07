@@ -32,8 +32,69 @@ No modules.
 | <a name="input_threat_intelligence_mode"></a> [threat\_intelligence\_mode](#input\_threat\_intelligence\_mode) | Threat intelligence mode for the Firewall Policy. | `string` | `"Alert"` | no |  
 ## Outputs
 
-| Name | Description |
-|------|-------------|
-| <a name="output_firewall_policy_base_policy_id"></a> [firewall\_policy\_base\_policy\_id](#output\_firewall\_policy\_base\_policy\_id) | ID of the Azure Firewall Policy. |
-| <a name="output_firewall_policy_id"></a> [firewall\_policy\_id](#output\_firewall\_policy\_id) | ID of the Azure Firewall Policy. |
+No outputs.
 <!-- END_TF_DOCS -->
+
+## Usage
+
+```
+firewall_policy_name     = "my-fw-policy"
+location                 = "eastus"
+resource_group_name      = "my-rg"
+firewall_policy_sku      = "Premium"  # or "Standard"
+threat_intelligence_mode = "Alert"    # or "Deny", "Off"
+
+firewall_policy_dns = {
+  proxy_enabled = true
+  servers       = ["8.8.8.8", "8.8.4.4"]
+}
+
+intrusion_detection = {
+  mode           = "Alert"  # or "Deny", "Off"
+  private_ranges = ["10.0.0.0/8", "192.168.0.0/16"]
+
+  signature_overrides = [
+    {
+      id    = "252500001"
+      state = "Disabled"
+    },
+    {
+      id    = "252500002"
+      state = "Enabled"
+    }
+  ]
+
+  traffic_bypass = [
+    {
+      name                  = "bypass-http"
+      protocol              = "TCP"
+      description           = "Bypass HTTP traffic"
+      destination_addresses = ["20.10.10.10"]
+      destination_ip_groups = []
+      destination_ports     = ["80"]
+      source_addresses      = ["10.0.1.0/24"]
+      source_ip_groups      = []
+    }
+  ]
+}
+
+threat_intelligence_allowlist = {
+  fqdns        = ["safe.example.com"]
+  ip_addresses = ["203.0.113.10"]
+}
+
+explicit_proxy = {
+  enabled         = true
+  http_port       = 3128
+  https_port      = 3129
+  enable_pac_file = true
+  pac_file_port   = 8080
+  pac_file        = "http://myproxy.example.com/proxy.pac"
+}
+
+tags = {
+  environment = "dev"
+  project     = "network-security"
+}
+
+```
